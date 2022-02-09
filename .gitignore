@@ -5,3 +5,4 @@
 /HotelsWebApi/bin/Debug/net6.0
 /HotelsWebApi/obj
 /.vs
+*.db
