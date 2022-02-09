@@ -1,3 +1,5 @@
+using HotelsWebApi;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<HotelDbContext>(options => 
@@ -57,17 +59,3 @@ app.MapDelete("hotels/{id}", async (int id, HotelDbContext dbContext) =>
 app.UseHttpsRedirection();
 
 app.Run();
-
-public class HotelDbContext : DbContext
-{
-    public HotelDbContext(DbContextOptions<HotelDbContext> options) : base(options) {}
-    public DbSet<Hotel> Hotels => Set<Hotel>();
-}
-
-public class Hotel
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-}
