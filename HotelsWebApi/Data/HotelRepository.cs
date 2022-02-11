@@ -12,6 +12,9 @@ public class HotelRepository : IHotelRepository
 
     public async Task<List<Hotel>> GetHotelsAsync() => await _context.Hotels.ToListAsync();
 
+    public async Task<List<Hotel>> GetHotelsByNameAsync(string name) =>
+        await _context.Hotels.Where(hotel => hotel.Name == name).ToListAsync();
+
     public async Task<Hotel> GetHotelByIdAsync(int hotelId) => await _context.Hotels.FirstOrDefaultAsync(h => h.Id == hotelId);
 
     public Task InsertHotelAsync(Hotel hotel) => Task.FromResult(_context.Hotels.Add(hotel));
