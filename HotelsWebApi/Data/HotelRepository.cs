@@ -24,7 +24,6 @@ public class HotelRepository : IHotelRepository
         hotelFromDb.Latitude = hotel.Latitude;
         hotelFromDb.Longitude = hotel.Longitude;
         hotelFromDb.Name = hotel.Name;
-
     }
 
     public async Task DeleteHotelAsync(int hotelId)

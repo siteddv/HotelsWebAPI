@@ -1,9 +1,12 @@
 using HotelsWebApi;
+using HotelsWebApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<HotelDbContext>(options => 
     options.UseSqlite(builder.Configuration.GetConnectionString("Sqlite")));
+
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 
 var app = builder.Build();
 
@@ -15,43 +18,33 @@ if (app.Environment.IsDevelopment()){}
     db.Database.EnsureCreated();
 }
 
-var hotels = new List<Hotel>();
+app.MapGet("/hotels", async (IHotelRepository repository) => await repository.GetHotelsAsync());
 
-app.MapGet("/hotels", async (HotelDbContext dbContext) => await dbContext.Hotels.ToListAsync());
-
-app.MapGet("/hotels/{id}", async (int id, HotelDbContext db) => 
-    await db.Hotels.FirstOrDefaultAsync(h => h.Id == id) is Hotel hotel
+app.MapGet("/hotels/{id}", async (int id, IHotelRepository repository) => 
+    await repository.GetHotelByIdAsync(id) is Hotel hotel
     ? Results.Ok(hotel)
     : Results.NotFound());
 
 app.MapPost("/hotels", async ([FromBody] Hotel hotel,
-    HotelDbContext dbContext) =>
+    IHotelRepository repository) =>
 {
-    dbContext.Hotels.Add(hotel);
-    await dbContext.SaveChangesAsync();
+    await repository.InsertHotelAsync(hotel);
+    await repository.SaveAsync();
     return Results.Created($"/hotels/{hotel.Id}", hotel);
 });
 
-app.MapPut("/hotels", async ([FromBody]Hotel hotel, HotelDbContext dbContext) =>
+app.MapPut("/hotels", async ([FromBody]Hotel hotel, IHotelRepository repository) =>
 {
-    var hotelFromDb = await dbContext.Hotels.FindAsync(new object[] {hotel.Id});
-    if (hotelFromDb == null) return Results.NotFound();
+    await repository.UpdateHotelAsync(hotel);
 
-    hotelFromDb.Latitude = hotel.Latitude;
-    hotelFromDb.Longitude = hotel.Longitude;
-    hotelFromDb.Name = hotel.Name;
-
-    await dbContext.SaveChangesAsync();
+    await repository.SaveAsync();
     return Results.NoContent();
 });
 
-app.MapDelete("hotels/{id}", async (int id, HotelDbContext dbContext) =>
+app.MapDelete("hotels/{id}", async (int id, IHotelRepository repository) =>
 {
-    var hotelFromDb = await dbContext.Hotels.FindAsync(new object[] {id});
-    if (hotelFromDb == null) return Results.NotFound();
-
-    dbContext.Hotels.Remove(hotelFromDb);
-    await dbContext.SaveChangesAsync();
+    await repository.DeleteHotelAsync(id);
+    await repository.SaveAsync();
 
     return Results.NoContent();
 });
