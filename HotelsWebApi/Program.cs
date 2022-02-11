@@ -22,7 +22,7 @@ app.MapGet("/hotels", async (IHotelRepository repository) => await repository.Ge
 app.MapGet("/hotels/{id}", async (int id, IHotelRepository repository) => 
     await repository.GetHotelByIdAsync(id) is Hotel hotel
     ? Results.Ok(hotel)
-    : Results.NotFound());
+    : Results.NotFound());//fff
 
 app.MapPost("/hotels", async ([FromBody] Hotel hotel,
     IHotelRepository repository) =>
