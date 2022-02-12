@@ -1,4 +1,4 @@
-namespace HotelsWebApi;
+namespace HotelsWebApi.Data;
 
 public class Hotel
 {

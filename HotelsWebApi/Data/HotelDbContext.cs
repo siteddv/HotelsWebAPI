@@ -1,3 +1,5 @@
+using HotelsWebApi.Data;
+
 namespace HotelsWebApi;
 
 public class HotelDbContext : DbContext

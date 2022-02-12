@@ -1,5 +1,4 @@
-﻿using HotelsWebApi;
-using HotelsWebApi.Data;
+﻿namespace HotelsWebApi.Data;
 
 public class HotelRepository : IHotelRepository
 {
